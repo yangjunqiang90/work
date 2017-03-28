@@ -1,0 +1,1 @@
+cmd_/home/yangjunqiang/work/driver/fsync_pthread/fasync.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/yangjunqiang/work/driver/fsync_pthread/fasync.ko /home/yangjunqiang/work/driver/fsync_pthread/fasync.o /home/yangjunqiang/work/driver/fsync_pthread/fasync.mod.o

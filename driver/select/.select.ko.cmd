@@ -1,0 +1,1 @@
+cmd_/home/yangjunqiang/work/driver/select/select.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/yangjunqiang/work/driver/select/select.ko /home/yangjunqiang/work/driver/select/select.o /home/yangjunqiang/work/driver/select/select.mod.o
