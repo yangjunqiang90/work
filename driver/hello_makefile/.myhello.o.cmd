@@ -1,0 +1,1 @@
+cmd_/home/yangjunqiang/work/driver/hello_makefile/myhello.o := ld -m elf_x86_64   -r -o /home/yangjunqiang/work/driver/hello_makefile/myhello.o /home/yangjunqiang/work/driver/hello_makefile/head.o /home/yangjunqiang/work/driver/hello_makefile/hello.o 
