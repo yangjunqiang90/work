@@ -58,7 +58,6 @@ static struct file_operations hello_fops = {
 
 
 void insert(struct list_head * new,struct list_head * head){
-	Student *tmp;
 	Student *p;
 	Student *q;
 
@@ -71,7 +70,8 @@ void insert(struct list_head * new,struct list_head * head){
 	}
 
 	n = container_of(new,Student,list);
-
+/*
+ 	//和下面的从重复了，这段代码不用了。
 	//链表只有一个元素
 	if(head->next->next == head){
 		tmp = container_of(head->next,Student,list);
@@ -84,7 +84,7 @@ void insert(struct list_head * new,struct list_head * head){
 		}
 		return ;		
 	}
-
+*/
 	//链表有多个元素
 	//先处理是否插入到第一个节点的前面（也就是头结点的后面）或者最后一个节点的后面
 	
@@ -101,6 +101,7 @@ void insert(struct list_head * new,struct list_head * head){
 		__list_add(new,head,head->next);	
 		return ;
 	}
+	
 
 	while(1){
 		q=container_of(p->list.next,Student,list);
