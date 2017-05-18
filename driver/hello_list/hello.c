@@ -107,7 +107,12 @@ static int hello_drv_init(void)
 	//遍历链表，pos是遍历的每一个结果
 	list_for_each(pos,&(students)){
 		t = container_of(pos,Student ,list);
-		printk("student id is:%d \n",t->sid);
+		printk("list_for_each:student id is:%d \n",t->sid);
+	}
+
+	//遍历链表，pos是遍历的每一个结果
+	list_for_each_entry(t,&(students),list){
+		printk("list_for_each_entry:student id is:%d \n",t->sid);
 	}
 	
 	//这里要释放链表中的元素，使用list_for_each就会出错。
