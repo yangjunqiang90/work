@@ -10,8 +10,6 @@
 
 #include"head.h"
 
-//#define FASYNC_MINOR 1
-//#define FASYNC_MAJOR 244
 #define DEVICE_NUMBER 1
 static struct class * hello_class;
 static struct device * hello_class_dev;
@@ -66,17 +64,14 @@ static struct file_operations hello_fops = {
 static int hello_drv_init(void)
 {
 	int ret;
-	//dev_t devno = MKDEV(FASYNC_MAJOR,FASYNC_MINOR);
 	
 	ret=alloc_chrdev_region(&my_device.devno,0,DEVICE_NUMBER,"hello");
-	//ret = register_chrdev_region(devno, DEVICE_NUMBER, "hello");
 	if (ret < 0) {
 		printk("failed: register_chrdev_region\n");
 		return ret;
 	}
 
-	//去掉括号
-	cdev_init(&(my_device.cdev), &hello_fops);
+	cdev_init(&my_device.cdev, &hello_fops);
 	ret = cdev_add(&my_device.cdev, my_device.devno, DEVICE_NUMBER);
 	if (ret < 0) {
 		printk("faield: cdev_add\n");
@@ -92,11 +87,9 @@ static int hello_drv_init(void)
 static void hello_drv_exit(void)
 {
 		
-	//dev_t devno = MKDEV(FASYNC_MAJOR,FASYNC_MINOR);	
-	
 	device_destroy(hello_class,my_device.devno);
 	class_destroy(hello_class);
-		
+
 	cdev_del(&(my_device.cdev));
 	unregister_chrdev_region(my_device.devno,DEVICE_NUMBER);
 }
