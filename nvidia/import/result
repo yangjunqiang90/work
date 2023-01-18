@@ -1,0 +1,276 @@
+
+
+code:
+252     //checkCudaErrors(cudaImportExternalMemory(&extMemRawBuf, &memHandleDesc));
+253     printf("%s %d begin\n\n",__func__,__LINE__);
+254     cudaImportExternalMemory(&extMemRawBuf, &memHandleDesc);
+255     printf("%s %d\n",__func__,__LINE__);
+256 
+257     cudaExternalMemoryBufferDesc bufferDesc;
+258     memset(&bufferDesc, 0, sizeof(bufferDesc));
+259     bufferDesc.offset = 0;
+260     bufferDesc.size = size;
+261     m_bufSize = size;
+262     //checkCudaErrors(cudaExternalMemoryGetMappedBuffer(
+263      //   &d_outputBuf, extMemRawBuf, &bufferDesc));
+264     //checkCudaErrors(
+265     printf("%s %d\n\n",__func__,__LINE__);
+266     cudaExternalMemoryGetMappedBuffer(&d_outputBuf, extMemRawBuf, &bufferDesc);
+267     printf("%s %d\n",__func__,__LINE__);
+
+
+strace log:
+3146 write(1, "cudaImportNvSciRawBuf 253 begin\n"..., 33cudaImportNvSciRawBuf 253 begin^M
+3147 ^M
+3148 ) = 33^M
+3149 write(1, "cudaImportNvSciRawBuf 255\n", 26cudaImportNvSciRawBuf 255^M
+3150 ) = 26^M
+3152 write(1, "cudaImportNvSciRawBuf 265\n\n", 27cudaImportNvSciRawBuf 265^M
+3153 ^M
+3154 ) = 27^M 
+3155 ioctl(3, _IOC(_IOC_READ, 0x4e, 0x1b, 0x40), 0xffffcc01ade8) = 0^M
+3156 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0x6a, 0xc), 0xffffcc01ade8) = 0^M
+3157 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa20) = 0^M
+3158 lseek(41, 0, SEEK_END)                  = 4194304^M
+3159 close(41)                               = 0^M
+3160 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa70) = 0^M
+3161 fcntl(41, F_SETFD, FD_CLOEXEC)          = 0^M
+3162 ioctl(7, _IOC(_IOC_READ|_IOC_WRITE, 0x41, 0x7, 0x28), 0xffffcc01ab10) = 0^M
+3163 close(41)                               = 0^M
+3164 write(1, "cudaImportNvSciRawBuf 267\n", 26cudaImportNvSciRawBuf 267^M
+
+
+
+cudaImportExternalMemory 可能没有下发到驱动里面
+openat(AT_FDCWD, "/home/cambricon/.nv/ComputeCache/index", O_RDWR) = 41
+/proc/1089230/fd/3 -> /dev/nvmap
+/proc/1089230/fd/7 -> anon_inode:nvhost-ga10b-fd7
+nvmap
+nvgpu
+
+
+cudaExternalMemoryGetMappedBuffer
+3155 ioctl(3, _IOC(_IOC_READ, 0x4e, 0x1b, 0x40), 0xffffcc01ade8) = 0
+3156 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0x6a, 0xc), 0xffffcc01ade8) = 0
+3157 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa20) = 0
+3158 lseek(41, 0, SEEK_END)                  = 4194304
+3159 close(41)                               = 0
+3160 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa70) = 0
+3161 fcntl(41, F_SETFD, FD_CLOEXEC)          = 0
+3162 ioctl(7, _IOC(_IOC_READ|_IOC_WRITE, 0x41, 0x7, 0x28), 0xffffcc01ab10) = 0
+3163 close(41)                               = 0
+
+
+3155 ioctl(3, _IOC(_IOC_READ, 0x4e, 0x1b, 0x40), 0xffffcc01ade8) = 0
+	
+Note:
+1.static long nvmap_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+2.NVMAP_IOC_PARAMETERS ==> _IOR('N', 27, struct nvmap_handle_parameters)://handle表示dma buf的fd
+3.nvmap_ioctl_get_handle_parameters
+4.  dmabuf->exp_name 如果是"nvmap_dmabuf",则dmabuf is nvmap,否则函数就失败了, 这里只处理dmabuf is nvmap
+	根据dma buf的fd可以获取到nvmap_handle. is ro 表示是否是只读内存
+5.填充nvmap_handle_parameters剩余的变量返回用户态access_flags/coherency/offset/align/heap_number/size
+6.client->ida 非空
+6.根据传下来的nvmap的dma fd, 找到dma buf对应的nvmap_handle,并将具体信息返回到用户态.
+
+
+  607   3)               |        __traceiter_refcount_free_handle [nvmap]() {^M
+  608   3)               |          nvmap_ioctl_get_handle_parameters [nvmap]() {^M
+  609   3)               |            nvmap_handle_get_from_id [nvmap]() {^M
+  610   3)               |              dma_buf_get() {^M
+  611   3)               |                fget() {^M
+  612   3)   0.192 us    |                  __rcu_read_lock();^M
+  613   3)   0.192 us    |                  __rcu_read_unlock();^M
+  614   3)   0.928 us    |                }
+  615   3)   1.600 us    |              }
+  616   3)               |              nvmap_id_array_get_dmabuf_from_id [nvmap]() {^
+  617   3)   0.384 us    |                __rcu_read_lock();^M
+  618   3)   0.320 us    |                __rcu_read_unlock();^M
+  619   3)   3.936 us    |              }^M
+  620   3)   0.384 us    |              dmabuf_is_nvmap [nvmap]();^M
+  621   3)               |              nvmap_handle_get [nvmap]() {^M
+  622   3)               |                pfn_valid() {^M
+  623   3)   0.224 us    |                  memblock_is_map_memory();^M
+  624   3)   0.800 us    |                }^M
+  625   3)   1.600 us    |              }^M
+  626   3)               |              dma_buf_put() {^M
+  627   3)               |                fput() {^M
+  628   3)   0.192 us    |                  fput_many();^M
+  629   3)   0.608 us    |                }^M
+  630   3)   0.960 us    |              }^M
+  631   3) + 11.328 us   |            }^M
+  632   3)               |            is_nvmap_id_ro [nvmap]() {^M
+  633   3)               |              nvmap_id_array_get_dmabuf_from_id [nvmap]() {^M
+  634   3)   0.160 us    |                __rcu_read_lock();^M
+  635   3)   0.192 us    |                __rcu_read_unlock();^M
+  636   3)   1.024 us    |              }^M
+  637   3)   0.192 us    |              dmabuf_is_nvmap [nvmap]();^M
+  638   3)               |              dma_buf_put() {^M
+  639   3)               |                fput() {^M
+  640   3)   0.384 us    |                  fput_many();^M
+  641   3)   0.896 us    |                }^M
+  642   3)   1.280 us    |              }^M
+  643   3)   3.456 us    |            }^M
+  644   3)               |            nvmap_handle_put [nvmap]() {^M
+  645   3)               |              pfn_valid() {^M
+  646   3)   0.416 us    |                memblock_is_map_memory();^M
+  647   3)   0.800 us    |              }^M
+  648   3)   1.408 us    |            }^M
+  649   3) + 18.816 us   |          }^M
+  650   3) + 19.904 us   |        }^M
+
+
+6a ==> 106
+3156 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0x6a, 0xc), 0xffffcc01ade8) = 0
+Note:
+1.#define NVMAP_IOC_DUP_HANDLE _IOWR(NVMAP_IOC_MAGIC, 106,
+2.nvmap_ioctl_dup_handle
+3.Don't allow duplicating RW handle from RO handle
+4.填充入参 op.dup_handle = id
+5.根据id值有两种途经找dma buf,xa_load 和 dma_buf_get(id),根据 client->ida 决定走哪个通路
+这里走的是xa load这个途经
+6. 根据 id 找到 dma buf ,加nvmap_handle_ref的引用计数
+创建了一个新的nvmap_handle, 并引用了之前的dma buf
+nvmap_create_handle_from_id
+	nvmap_handle_get_from_id//返回 nvmap_handle_ref
+	nvmap_duplicate_handle //创建 nvmap_handle_ref 或者 nvmap_handle_ref 加个引用计数
+		nvmap_validate_get//查红黑树,检查handle的合法性,并且nvmap_handle_get加引用计数
+	nvmap_id_array_id_alloc // Create mapping between the id(NvRmMemHandle) and dma_buf 返回int 的值,参考nvmap_id_array_get_dmabuf_from_id
+
+	
+3157 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa20) = 0
+1.#define NVMAP_IOC_GET_FD  _IOWR(NVMAP_IOC_MAGIC, 15, struct nvmap_create_handle)
+2.nvmap_ioctl_getfd
+3.根据入参的handle值,找到nvmap_handle, dma buf加个引用计数,构造一个dma buf的fd
+
+
+nvmap_handle_get_from_id
+	nvmap_handle_get_from_id //根据入参的 id 找nvmap_handle
+	nvmap_get_dmabuf_fd
+		__nvmap_dmabuf_export
+			nvmap_handle_get
+			get_dma_buf
+			nvmap_handle_put
+		__nvmap_dmabuf_fd
+			get_unused_fd_flags //获取一个新的fd
+	nvmap_install_fd
+		fd_install
+
+
+3160 ioctl(3, _IOC(_IOC_READ|_IOC_WRITE, 0x4e, 0xf, 0x8), 0xffffcc01aa70) = 0
+	#define NVMAP_IOC_GET_FD  _IOWR(NVMAP_IOC_MAGIC, 15, struct nvmap_create_handle)
+		nvmap_ioctl_getfd
+
+3162 ioctl(7, _IOC(_IOC_READ|_IOC_WRITE, 0x41, 0x7, 0x28), 0xffffcc01ab10) = 0
+note:
+1. #define NVGPU_AS_IOCTL_MAP_BUFFER_EX _IOWR(NVGPU_AS_IOCTL_MAGIC, 7, struct nvgpu_as_map_buffer_ex_args)
+2. nvgpu_as_map_buffer_ex_args 有 dmabuf_fd,这里用的是dma buf的fd哦
+3. dma_buf->map_dma_buf 构造一个sg table. 赋值给attach的priv.
+ 	(1) struct nvmap_handle_info *info = attach->dmabuf->priv;
+	(2) 如果export buff是外围的(alloc_from_va) 并且是只读的,不在gpu上map,返回error
+	(3) attach->priv = sgt; //sgt = __nvmap_sg_table(NULL, info->handle);
+	
+gk20a_as_dev_ioctl
+	gk20a_as_ioctl_map_buffer_ex
+		nvgpu_vm_map_buffer
+			dma_buf_get//get from args
+			nvgpu_vm_map_linux
+				nvgpu_mm_pin
+					dma_buf_attach
+					dma_buf_map_attachment
+					*attachment = attach;
+					返回sgt
+				sgt转成struct nvgpu_sgt
+				nvgpu_vm_map				
+					nvgpu_vm_new_mapping
+						nvgpu_vm_find_mapping
+							nvgpu_vm_find_mapped_buf
+								nvgpu_rbtree_search
+						nvgpu_kzalloc
+						*mapped_buffer_arg = mapped_buffer;申请 nvgpu_mapped_buf,并赋值
+						nvgpu_sgt_alignment//会触发nvgpu_cond_broadcast_interruptible 函数调用,但没找到怎么触发的.
+						
+					nvgpu_vm_area_validate_buffer
+						nvgpu_vm_area_find
+						nvgpu_vm_find_mapped_buf_less_than
+							nvgpu_rbtree_less_than_search
+					nvgpu_vm_do_map
+					 	g->ops.mm.gmmu.map 猜测是nvgpu_gmmu_map_locked //Map a buffer into the GMMU
+						nvgpu_gmmu_map_locked
+							gp10b_fb_compression_page_size 猜测是g->ops.fb.compression_page_size(g);
+							nvgpu_is_enabled
+							nvgpu_is_errata_present
+							vaddr != 0ULL //非static 函数没执行
+							nvgpu_gmmu_update_page_table//没找到入口函数
+								
+							nvgpu_gmmu_cache_maint_map//几乎所有的代码都可以找到
+								nvgpu_pg_elpg_ms_protected_call
+									nvgpu_pg_elpg_ms_disable
+										g->ops.gr.init.wait_initialized(g);//nvgpu_gr_wait_initialized
+											nvgpu_is_enabled
+										nvgpu_mutex_acquire(&g->cg_pg_lock)
+										没有 函数调用
+										nvgpu_mutex_release(&g->cg_pg_lock);
+									g->ops.fb.tlb_invalidate(g, vm->pdb.mem)//gm20b_fb_tlb_invalidate
+										nvgpu_mem_get_addr
+											nvgpu_mem_get_addr_sysmem
+												nvgpu_mem_get_addr_sgl
+													nvgpu_is_enabled
+													nvgpu_iommuable//nvgpu_cond_broadcast_interruptible
+													g->ops.mm.gmmu.gpu_phys_addr//gv11b_gpu_phys_addr
+										nvgpu_timeout_init_retry
+										gk20a_readl
+										nvgpu_timeout_init_retry
+										gk20a_writel
+						
+										
+									nvgpu_pg_elpg_ms_enable
+										nvgpu_gr_wait_initialized
+
+						
+					填充nvgpu_mapped_buf结构体
+					nvgpu_insert_mapped_buf
+					
+
+				mapped_buffer->os_priv.dmabuf = dmabuf;//nvgpu_mapped_buf 类型
+				mapped_buffer->os_priv.attachment = attachment;
+				mapped_buffer->os_priv.sgt    = sgt;
+				*gpu_va = mapped_buffer->addr; //函数带回
+
+
+=======================================================
+//看不到从哪里掉进来的,说明是从static 函数进入的.在当前文件搜索一下就可以找到函数入口了.
+nvgpu_gmmu_cache_maint_map//推出来是从这个函数进入的.
+	nvgpu_pg_elpg_ms_protected_call//是个宏
+		nvgpu_pg_elpg_ms_disable
+		g->ops.gr.init.wait_initialized(g);
+		nvgpu_mutex_acquire(&g->cg_pg_lock)
+		没有 函数调用
+		nvgpu_mutex_release(&g->cg_pg_lock);
+	nvgpu_pg_elpg_ms_enable
+
+
+nvgpu_buddy_allocator_init
+	nvgpu_sgt_get_phys
+
+
+nvgpu_mem_get_addr
+	nvgpu_mem_get_addr_sysmem
+		nvgpu_mem_get_addr_sgl
+			nvgpu_is_enabled
+			nvgpu_iommuable
+
+
+
+ga10b_mm_mmu_fault_parse_mmu_fault_info
+//gops->mm.mmu_fault = ga10b_ops_mm_mmu_fault.parse_mmu_fault_info  = ga10b_mm_mmu_fault_parse_mmu_fault_info
+gops->mm.mmu_fault = ga10b_ops_mm_mmu_fault
+ga10b_ops_mm_mmu_fault.parse_mmu_fault_info  = ga10b_mm_mmu_fault_parse_mmu_fault_info
+
+gv11b_gpu_phys_addr
+//gops->mm.gmmu = ga10b_ops_mm_gmmu.gpu_phys_addr = gv11b_gpu_phys_addr
+gops->mm.gmmu = ga10b_ops_mm_gmmu
+ga10b_ops_mm_gmmu.gpu_phys_addr = gv11b_gpu_phys_addr
+
+
+gk20a 是nvgpu的名字

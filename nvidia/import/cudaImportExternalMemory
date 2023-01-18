@@ -1,0 +1,145 @@
+0xaaaaaaaad278 <cudaNvSciSignal::cudaImportNvSciRawBuf(NvSciBufObjRefRec*)+396> ldr     x0, [sp, #24]
+0xaaaaaaaad27c <cudaNvSciSignal::cudaImportNvSciRawBuf(NvSciBufObjRefRec*)+400> add     x0, x0, #0x130
+0xaaaaaaaad280 <cudaNvSciSignal::cudaImportNvSciRawBuf(NvSciBufObjRefRec*)+404> add     x1, sp, #0x50                                                                                                  │
+0xaaaaaaaad284 <cudaNvSciSignal::cudaImportNvSciRawBuf(NvSciBufObjRefRec*)+408> bl      0xaaaaaaaf0ae0 <cudaImportExternalMemory> 
+
+
+0xaaaaaaaf0ae0 <cudaImportExternalMemory>       stp     x29, x30, [sp, #-272]!
+0xaaaaaaaf0ae4 <cudaImportExternalMemory+4>     mov     x29, sp                                                                                                                                        │
+0xaaaaaaaf0ae8 <cudaImportExternalMemory+8>     stp     x21, x22, [sp, #32]                                                                                                                            │
+0xaaaaaaaf0aec <cudaImportExternalMemory+12>    mov     x21, x0                                                                                                                                        │
+0xaaaaaaaf0af0 <cudaImportExternalMemory+16>    mov     x22, x1                                                                                                                                        │
+0xaaaaaaaf0af4 <cudaImportExternalMemory+20>    str     wzr, [x29, #116]                                                                                                                               │
+0xaaaaaaaf0af8 <cudaImportExternalMemory+24>    str     xzr, [x29, #120]                                                                                                                               │
+0xaaaaaaaf0afc <cudaImportExternalMemory+28>    bl      0xaaaaaaad4118 <__cudart240>                                                                                                                   │
+0xaaaaaaaf0b00 <cudaImportExternalMemory+32>    cbz     x0, 0xaaaaaaaf0c50 <cudaImportExternalMemory+368>                                                                                              │
+0xaaaaaaaf0b04 <cudaImportExternalMemory+36>    str     x19, [x29, #16]                                                                                                                                │
+0xaaaaaaaf0b08 <cudaImportExternalMemory+40>    mov     x19, x0                                                                                                                                        │
+0xaaaaaaaf0b0c <cudaImportExternalMemory+44>    bl      0xaaaaaaac8920 <__cudart102>                                                                                                                   │
+0xaaaaaaaf0b10 <cudaImportExternalMemory+48>    cbnz    w0, 0xaaaaaaaf0c40 <cudaImportExternalMemory+352>                                                                                              │
+0xaaaaaaaf0b14 <cudaImportExternalMemory+52>    ldr     x0, [x19, #80]                                                                                                                                 │
+0xaaaaaaaf0b18 <cudaImportExternalMemory+56>    ldr     w1, [x0, #1096]                                                                                                                                │
+0xaaaaaaaf0b1c <cudaImportExternalMemory+60>    cbz     w1, 0xaaaaaaaf0c60 <cudaImportExternalMemory+384>                                                                                              │
+0xaaaaaaaf0b20 <cudaImportExternalMemory+64>    adrp    x2, 0xaaaaaab1c000 <__cudart1233+256>                                                                                                          │
+0xaaaaaaaf0b24 <cudaImportExternalMemory+68>    add     x3, x2, #0xf0  
+
+
+
+0x0000aaaaaaaf0ae0 <+0>:	stp	x29, x30, [sp, #-272]!
+   0x0000aaaaaaaf0ae4 <+4>:	mov	x29, sp
+   0x0000aaaaaaaf0ae8 <+8>:	stp	x21, x22, [sp, #32]
+   0x0000aaaaaaaf0aec <+12>:	mov	x21, x0
+   0x0000aaaaaaaf0af0 <+16>:	mov	x22, x1
+   0x0000aaaaaaaf0af4 <+20>:	str	wzr, [x29, #116]
+   0x0000aaaaaaaf0af8 <+24>:	str	xzr, [x29, #120]
+   0x0000aaaaaaaf0afc <+28>:	bl	0xaaaaaaad4118 <__cudart240>
+
+
+
+
+
+   0x0000aaaaaaaf0b00 <+32>:	cbz	x0, 0xaaaaaaaf0c50 <cudaImportExternalMemory+368>
+   0x0000aaaaaaaf0b04 <+36>:	str	x19, [x29, #16]
+   0x0000aaaaaaaf0b08 <+40>:	mov	x19, x0
+   0x0000aaaaaaaf0b0c <+44>:	bl	0xaaaaaaac8920 <__cudart102>
+   0x0000aaaaaaaf0b10 <+48>:	cbnz	w0, 0xaaaaaaaf0c40 <cudaImportExternalMemory+352>
+   0x0000aaaaaaaf0b14 <+52>:	ldr	x0, [x19, #80]
+   0x0000aaaaaaaf0b18 <+56>:	ldr	w1, [x0, #1096]
+   0x0000aaaaaaaf0b1c <+60>:	cbz	w1, 0xaaaaaaaf0c60 <cudaImportExternalMemory+384>
+   0x0000aaaaaaaf0b20 <+64>:	adrp	x2, 0xaaaaaab1c000 <__cudart1233+256>
+   0x0000aaaaaaaf0b24 <+68>:	add	x3, x2, #0xf0
+   0x0000aaaaaaaf0b28 <+72>:	add	x5, x3, #0x7c8
+   0x0000aaaaaaaf0b2c <+76>:	add	x0, x29, #0x78
+   0x0000aaaaaaaf0b30 <+80>:	str	x20, [x29, #24]
+   0x0000aaaaaaaf0b34 <+84>:	add	x7, x29, #0x80
+   0x0000aaaaaaaf0b38 <+88>:	stp	x23, x24, [x29, #48]
+   0x0000aaaaaaaf0b3c <+92>:	dup	v0.2d, x5
+   0x0000aaaaaaaf0b40 <+96>:	str	x25, [x29, #64]
+   0x0000aaaaaaaf0b44 <+100>:	dup	v1.2d, x0
+   0x0000aaaaaaaf0b48 <+104>:	add	x20, x29, #0x110
+   0x0000aaaaaaaf0b4c <+108>:	add	x1, x29, #0x74
+   0x0000aaaaaaaf0b50 <+112>:	ldr	x9, [x19, #72]
+   0x0000aaaaaaaf0b54 <+116>:	mov	w4, #0x78                  	// #120
+   0x0000aaaaaaaf0b58 <+120>:	mov	v0.d[1], x7
+   0x0000aaaaaaaf0b5c <+124>:	stp	x21, x22, [x29, #128]
+   0x0000aaaaaaaf0b60 <+128>:	mov	v1.d[1], x1
+   0x0000aaaaaaaf0b64 <+132>:	str	w4, [x20, #-128]!
+   0x0000aaaaaaaf0b68 <+136>:	ldr	x10, [x9, #16]
+   0x0000aaaaaaaf0b6c <+140>:	mov	x23, #0x112                 	// #274
+   0x0000aaaaaaaf0b70 <+144>:	add	x25, x20, #0x40
+   0x0000aaaaaaaf0b74 <+148>:	add	x24, x20, #0x8
+   0x0000aaaaaaaf0b78 <+152>:	str	q0, [x29, #80]
+   0x0000aaaaaaaf0b7c <+156>:	mov	x0, x25
+   0x0000aaaaaaaf0b80 <+160>:	str	q1, [x29, #96]
+   0x0000aaaaaaaf0b84 <+164>:	blr	x10
+   0x0000aaaaaaaf0b88 <+168>:	ldr	x11, [x19, #64]
+   0x0000aaaaaaaf0b8c <+172>:	ldr	x0, [x29, #208]
+   0x0000aaaaaaaf0b90 <+176>:	mov	x1, x24
+   0x0000aaaaaaaf0b94 <+180>:	ldr	x12, [x11, #32]
+   0x0000aaaaaaaf0b98 <+184>:	blr	x12
+   0x0000aaaaaaaf0b9c <+188>:	stp	xzr, x23, [x29, #216]
+   0x0000aaaaaaaf0ba0 <+192>:	adrp	x13, 0xaaaaaab60000
+   0x0000aaaaaaaf0ba4 <+196>:	str	xzr, [x29, #160]
+   0x0000aaaaaaaf0ba8 <+200>:	ldr	q3, [x29, #80]
+   0x0000aaaaaaaf0bac <+204>:	mov	x1, x20
+   0x0000aaaaaaaf0bb0 <+208>:	ldr	x14, [x13, #16]
+   0x0000aaaaaaaf0bb4 <+212>:	mov	w0, w23
+   0x0000aaaaaaaf0bb8 <+216>:	str	x14, [x29, #248]
+   0x0000aaaaaaaf0bbc <+220>:	ldr	q2, [x29, #96]
+   0x0000aaaaaaaf0bc0 <+224>:	str	q3, [x29, #192]
+   0x0000aaaaaaaf0bc4 <+228>:	ldr	x15, [x19, #64]
+
+ 0x0000aaaaaaaf0bc4 <+228>:	ldr	x15, [x19, #64]
+--Type <RET> for more, q to quit, c to continue without paging--n
+   0x0000aaaaaaaf0bc8 <+232>:	str	q2, [x29, #176]
+   0x0000aaaaaaaf0bcc <+236>:	ldr	x16, [x15, #8]
+   0x0000aaaaaaaf0bd0 <+240>:	blr	x16
+   0x0000aaaaaaaf0bd4 <+244>:	mov	x1, x22
+   0x0000aaaaaaaf0bd8 <+248>:	mov	x0, x21
+   0x0000aaaaaaaf0bdc <+252>:	bl	0xaaaaaaab6760 <__cudart793>
+   0x0000aaaaaaaf0be0 <+256>:	str	w0, [x29, #116]
+   0x0000aaaaaaaf0be4 <+260>:	ldr	x17, [x19, #72]
+   0x0000aaaaaaaf0be8 <+264>:	mov	x0, x25
+   0x0000aaaaaaaf0bec <+268>:	ldr	x18, [x17, #16]
+   0x0000aaaaaaaf0bf0 <+272>:	blr	x18
+   0x0000aaaaaaaf0bf4 <+276>:	ldr	x21, [x19, #64]
+   0x0000aaaaaaaf0bf8 <+280>:	ldr	x0, [x29, #208]
+   0x0000aaaaaaaf0bfc <+284>:	mov	x1, x24
+   0x0000aaaaaaaf0c00 <+288>:	ldr	x22, [x21, #32]
+   0x0000aaaaaaaf0c04 <+292>:	blr	x22
+   0x0000aaaaaaaf0c08 <+296>:	mov	w2, #0x1                   	// #1
+   0x0000aaaaaaaf0c0c <+300>:	str	w2, [x29, #228]
+   0x0000aaaaaaaf0c10 <+304>:	mov	x1, x20
+   0x0000aaaaaaaf0c14 <+308>:	mov	w0, w23
+   0x0000aaaaaaaf0c18 <+312>:	ldr	x19, [x19, #64]
+   0x0000aaaaaaaf0c1c <+316>:	ldr	x3, [x19, #8]
+   0x0000aaaaaaaf0c20 <+320>:	blr	x3
+   0x0000aaaaaaaf0c24 <+324>:	ldr	x25, [x29, #64]
+   0x0000aaaaaaaf0c28 <+328>:	ldp	x19, x20, [x29, #16]
+   0x0000aaaaaaaf0c2c <+332>:	ldp	x23, x24, [x29, #48]
+   0x0000aaaaaaaf0c30 <+336>:	ldr	w0, [x29, #116]
+   0x0000aaaaaaaf0c34 <+340>:	ldp	x21, x22, [sp, #32]
+   0x0000aaaaaaaf0c38 <+344>:	ldp	x29, x30, [sp], #272
+   0x0000aaaaaaaf0c3c <+348>:	ret
+   0x0000aaaaaaaf0c40 <+352>:	ldr	x19, [x29, #16]
+   0x0000aaaaaaaf0c44 <+356>:	ldp	x21, x22, [sp, #32]
+   0x0000aaaaaaaf0c48 <+360>:	ldp	x29, x30, [sp], #272
+   0x0000aaaaaaaf0c4c <+364>:	ret
+   0x0000aaaaaaaf0c50 <+368>:	ldp	x21, x22, [sp, #32]
+   0x0000aaaaaaaf0c54 <+372>:	mov	w0, #0x4                   	// #4
+   0x0000aaaaaaaf0c58 <+376>:	ldp	x29, x30, [sp], #272
+   0x0000aaaaaaaf0c5c <+380>:	ret
+   0x0000aaaaaaaf0c60 <+384>:	mov	x1, x22
+   0x0000aaaaaaaf0c64 <+388>:	mov	x0, x21
+   0x0000aaaaaaaf0c68 <+392>:	bl	0xaaaaaaab6760 <__cudart793>
+   0x0000aaaaaaaf0c6c <+396>:	ldr	x19, [x29, #16]
+   0x0000aaaaaaaf0c70 <+400>:	b	0xaaaaaaaf0c34 <cudaImportExternalMemory+340>
+
+
+
+
+disassemble xxxxx
+ disassemble /m main
+layout asm
+
+info registers
